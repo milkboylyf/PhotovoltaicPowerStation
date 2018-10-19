@@ -1,8 +1,6 @@
-
 # coding: utf-8
 
-# In[ ]:
-
+# In[1]:
 
 # numpy and pandas for data manipulation
 import numpy as np
@@ -33,7 +31,7 @@ test_id=app_test[['ID']]  # 获取测试id
 app_train_test = [app_train, app_test]
 app_train_test = pd.concat(app_train_test)
 
-app_train_test=app_train_test.mask(app_train_test.sub(app_train_test.mean()).div(app_train_test.std()).abs().gt(3))
+app_train_test=app_train_test.mask(app_train_test.sub(app_train_test.mean()).div(app_train_test.std()).abs().gt(3))  #？
 app_train_test=app_train_test.fillna(method='ffill')
 
 app_train_test.to_csv('data_prc.csv',index=False)
@@ -432,39 +430,29 @@ def my_scorer(y_true, y_predicted,X_test):
 
 
 def model(features, test_features, encoding = 'ohe', n_folds = 4):
-
     # Extract the ids
     train_ids = features['ID']
     test_ids = test_features['ID']
-
     # Extract the labels for training
     labels = features['发电量']
-
     # Remove the ids and target
     features = features.drop(columns = ['ID', '发电量'])
     test_features = test_features.drop(columns = ['ID'])
-
 
     # One Hot Encoding
     if encoding == 'ohe':
         features = pd.get_dummies(features)
         test_features = pd.get_dummies(test_features)
-
         # Align the dataframes by the columns
         features, test_features = features.align(test_features, join = 'inner', axis = 1)
-
         # No categorical indices to record
         cat_indices = 'auto'
-
     # Integer label encoding
     elif encoding == 'le':
-
         # Create a label encoder
         label_encoder = LabelEncoder()
-
         # List for storing categorical indices
         cat_indices = []
-
         # Iterate through each column
         for i, col in enumerate(features):
             if features[col].dtype == 'object':
@@ -474,7 +462,6 @@ def model(features, test_features, encoding = 'ohe', n_folds = 4):
 
                 # Record the categorical indices
                 cat_indices.append(i)
-
     # Catch error if label encoding scheme is not valid
     else:
         raise ValueError("Encoding must be either 'ohe' or 'le'")
